@@ -1,0 +1,21 @@
+{
+  "name": "schema-web",
+  "version": "1.0.11",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "ajv": "^5.2.0",
+    "body-parser": "^1.17.2",
+    "change-case": "^3.0.1",
+    "ejs": "^2.5.6",
+    "express": "^4.15.3",
+    "logger": "^1.0.7",
+    "ncp": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
