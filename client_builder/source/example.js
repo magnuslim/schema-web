@@ -9,7 +9,7 @@ if(typeof XMLHttpRequest === 'undefined') {
 }
 
 async function run() {
-    let client = new Client('http', 'localhost', 3000, 30); // 协议，地址，端口，超时时间
+    let client = new Client('http', 'localhost', 3000, 30000); // 协议，地址，端口，超时时间(毫秒)
     let response = await client.accountLogin({
         account: '13800138001',
         password: '123456'
