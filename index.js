@@ -1,5 +1,6 @@
 
 const Express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const SchemaHelper = require('./helper/schema.js');
 const stateHelper = require('./helper/state.js');
@@ -19,7 +20,8 @@ module.exports = class {
         host: undefined,
         port: undefined,
         handlerDir: undefined,
-        logDir: undefined
+        logDir: undefined,
+        
     }) {
         let zeus = new this();
         if(opts.host)          zeus._host       = opts.host;
@@ -38,6 +40,7 @@ module.exports = class {
         const logger = new Logger({path: this._log});
         const schemaHelper = new SchemaHelper(this._handler);
         const app = Express();
+        app.use(cors());
         app.use(bodyParser.json({limit:"5mb"}));
 
         // 参数预处理

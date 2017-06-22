@@ -10,7 +10,8 @@
     "ejs": "^2.5.6",
     "express": "^4.15.3",
     "logger": "^1.0.7",
-    "ncp": "^2.0.0"
+    "ncp": "^2.0.0",
+    "cors": "^2.8.3"
   },
   "devDependencies": {},
   "scripts": {
