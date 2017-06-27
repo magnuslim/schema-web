@@ -44,7 +44,7 @@ module.exports = class {
                 },
                 {
                     type: 'dateFile',
-                    filename: this,
+                    filename: this._log,
                     pattern: "yyyy-MM-dd.log",
                     alwaysIncludePattern: true,
                     category: 'default'
@@ -52,7 +52,6 @@ module.exports = class {
             ]
         });
         const logger = log4js.getLogger('default');
-        //const logger = new Logger({path: this._log});
         const schemaHelper = new SchemaHelper(this._handler);
         const app = Express();
         app.use(cors());
