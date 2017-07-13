@@ -11,7 +11,7 @@ module.exports = class {
     run(name, request) {
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', `${this._protocol}://${this._host}:${this._port}/${name}`, true);
+            xhr.open('POST', `${this._protocol}://${this._host}:${this._port}/core/${name}`, true);
 			xhr.timeout = this._timeout;
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 

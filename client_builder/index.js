@@ -49,7 +49,7 @@ class Builder {
 		fs.mkdirSync(`${targetFolder}/${pureSchemaFolderName}`, errDealer);
         ncp(`${__dirname}/source/lib`, targetFolder + '/lib', errDealer);
 		fsx.copy(`${__dirname}/source/package.json`, targetFolder + '/package.json', errDealer);
-		fsx.copy(`${__dirname}/source/publish.sh`, targetFolder + '/publish.sh', errDealer);
+		//fsx.copy(`${__dirname}/source/publish.sh`, targetFolder + '/publish.sh', errDealer);
 		fsx.copy(`${__dirname}/source/example.js`, targetFolder + '/example.js', errDealer);
     }
 
