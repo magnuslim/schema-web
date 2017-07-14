@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const SchemaHelper = require('./helper/schema.js');
 const stateHelper = require('./helper/state.js');
-const log4js = require('log4js');
+const Logger = require('./helper/logger.js');
 
 module.exports = class {
 
@@ -36,18 +36,10 @@ module.exports = class {
     }
 
     raise() {
-        log4js.configure({
-            appenders: [
-                {
-                    type: 'dateFile',
-                    filename: this._log,
-                    pattern: "yyyy-MM-dd.log",
-                    alwaysIncludePattern: true,
-                    category: 'schema-web'
-                }
-            ]
+        const logger = new Logger({
+            level: Logger.LEVEL_ERROR,
+            path: this._log
         });
-        const logger = log4js.getLogger('schema-web');
         const schemaHelper = new SchemaHelper(this._handler);
         const app = Express();
         app.use(cors());
