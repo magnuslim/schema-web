@@ -1,17 +1,18 @@
 const QwebClientError = require('./error.js');
 
 module.exports = class {
-    constructor(protocol, host, port, timeout) {
+    constructor(protocol, host, port, root, timeout) {
         this._protocol = protocol;
         this._host = host;
         this._port = port;
+        this._root = root.replace(/([^/])$/, '$1/').replace(/^([^/])/, '/$1');
         this._timeout = timeout;
     }
 
     run(name, request) {
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', `${this._protocol}://${this._host}:${this._port}/core/${name}`, true);
+            xhr.open('POST', `${this._protocol}://${this._host}:${this._port}${this._root}${name}`, true);
 			xhr.timeout = this._timeout;
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 

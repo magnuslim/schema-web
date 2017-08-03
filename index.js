@@ -43,11 +43,11 @@ module.exports = class {
         const schemaHelper = new SchemaHelper(this._handler);
         const app = Express();
         app.use(cors());
-        app.use(bodyParser.json({limit:"5mb"}));
+        app.use(bodyParser.json({limit:"5mb", type: "*/*"}));
 
         // 参数预处理
-        app.post('/core/*', (req, res, next) => {
-            let apiName = req.originalUrl.replace(/^\/core\//, '');
+        app.post('/*', (req, res, next) => {
+            let apiName = req.originalUrl.replace(/^\//, '');
             let schema = schemaHelper.resolveSchema(apiName);
             req.api = {
                 name: apiName,
@@ -63,7 +63,7 @@ module.exports = class {
 
         // 中间件
         for(let idx in this._middlewareList) {
-            app.post( '/core' + this._middlewareList[idx].pattern, (req, res, next) => {
+            app.post(this._middlewareList[idx].pattern, (req, res, next) => {
                 this._middlewareList[idx].handle(req, res, next)
                 .catch((err) => {
                     logger.error(`[middleware.${idx}] ${err.stack}`);
@@ -73,7 +73,7 @@ module.exports = class {
         }
 
         // 接口派发
-        app.post('/core/*', async (req, res) => {
+        app.post('/*', async (req, res) => {
             try {
                 schemaHelper.validateSchema('request', req.api.payload.request, req.api.schema);
                 let response = await require(`${this._handler}/${req.api.name}`)(req.api.payload);
