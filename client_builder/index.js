@@ -13,7 +13,7 @@ let exitWithError = (err) => {
 }
 
 class Builder {
-	static run(handlerRoot, targetFolder) {
+	static run(handlerRoot, targetFolder, packageName) {
 		try{
 			// Clean existing target folder and initialize it.
 			this._initTargetFolder(targetFolder);
@@ -33,6 +33,9 @@ class Builder {
 			// Render API functions in index.js
 			let apiContent = this._compileApi(apiInfoList);
 			this._save(apiContent, `${targetFolder}/index.js`);
+
+			let packageJsonContent = this._compilePackageJson(packageName);
+			this._save(packageJsonContent, `${targetFolder}/package.json`);
 		}
 		catch(err) {
 			this._deleteFolderRecursive(targetFolder);
@@ -48,8 +51,6 @@ class Builder {
 		fs.mkdirSync(targetFolder, errDealer);
 		fs.mkdirSync(`${targetFolder}/${pureSchemaFolderName}`, errDealer);
         ncp(`${__dirname}/source/lib`, targetFolder + '/lib', errDealer);
-		fsx.copy(`${__dirname}/source/package.json`, targetFolder + '/package.json', errDealer);
-		//fsx.copy(`${__dirname}/source/publish.sh`, targetFolder + '/publish.sh', errDealer);
 		fsx.copy(`${__dirname}/source/example.js`, targetFolder + '/example.js', errDealer);
     }
 
@@ -97,6 +98,11 @@ class Builder {
 	static _compileApi(apiInfoList) {
 		let template = fs.readFileSync(`${__dirname}/source/template/index.js.tpl`, 'utf-8');
 		return ejs.render(template, {apiInfoList});
+	}
+
+	static _compilePackageJson(packageName) {
+		let template = fs.readFileSync(`${__dirname}/source/template/package.json.tpl`, 'utf-8');
+		return ejs.render(template, {packageName});
 	}
 
 }

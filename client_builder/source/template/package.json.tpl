@@ -1,5 +1,5 @@
 {
-  "name": "qweb-client",
+  "name": "<%-packageName-%>",
   "version": "1.0.0",
   "description": "qweb client.",
   "main": "build.js",
