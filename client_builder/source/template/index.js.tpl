@@ -9,7 +9,13 @@ const schemaDict = {<%for (let api of apiInfoList){ %>
 };
 
 module.exports = class {
-    constructor(protocol = 'http', host = 'localhost', port = '80', root = '/', timeout = 30000) {
+    constructor({
+        protocol: 'http',
+        host: 'localhost',
+        port: '80',
+        root: '/',
+        timeout: 30000
+    }) {
         this._transport = new Transport(protocol, host, port, root, timeout);
     }
 
