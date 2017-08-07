@@ -14,7 +14,7 @@ module.exports = class {
         host = 'localhost',
         port = '80',
         root = '/',
-        timeout: 30000
+        timeout = 30000
     }) {
         this._transport = new Transport(protocol, host, port, root, timeout);
     }
