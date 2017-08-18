@@ -1,4 +1,6 @@
 const Express = require('express');
+const iconv = require('iconv-lite');
+const ContentType = require('content-type');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const SchemaHelper = require('./helper/schema.js');
@@ -43,7 +45,19 @@ module.exports = class {
         const schemaHelper = new SchemaHelper(this._handler);
         const app = Express();
         app.use(cors());
-        app.use(bodyParser.json({limit:"5mb", type: "*/*"}));
+        app.use((req, res, next) => {
+            let chunks = [];
+            req.on('data', (chunk) => { 
+                chunks.push(chunk);
+            });
+            req.on('end', () => {
+                let contentType = ContentType.parse(req.headers['content-type']);
+                let charset = contentType.parameters.charset ? contentType.parameters.charset : 'UTF-8';
+                let body = iconv.decode(Buffer.concat(chunks), charset);
+                req.body = JSON.parse(body);
+                next();
+            });
+        });
 
         // 参数预处理
         app.post('/*', (req, res, next) => {
