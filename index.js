@@ -12,8 +12,8 @@ module.exports = class {
     constructor() {
         this._host = '0.0.0.0';
         this._port = 3000;
-        this._handler = './app/handler/';
-        this._log = './log/';
+        this._handler = `${__dirname}/app/handler`;
+        this._log = `${__dirname}/log/`;
         this._middlewareList = [];
     }
 
@@ -51,28 +51,40 @@ module.exports = class {
                 chunks.push(chunk);
             });
             req.on('end', () => {
-                let contentType = ContentType.parse(req.headers['content-type']);
-                let charset = contentType.parameters.charset ? contentType.parameters.charset : 'UTF-8';
-                let body = iconv.decode(Buffer.concat(chunks), charset);
-                req.body = JSON.parse(body);
-                next();
+                try {
+                    let contentType = ContentType.parse(req.headers['content-type']);
+                    let charset = contentType.parameters.charset ? contentType.parameters.charset : 'UTF-8';
+                    let body = iconv.decode(Buffer.concat(chunks), charset);
+                    req.body = JSON.parse(body);
+                    next();
+                }
+                catch(err) {
+                    logger.error(err.stack);
+                    next('Internal Server Error');
+                }
             });
         });
 
         // 参数预处理
         app.post('/*', (req, res, next) => {
-            let apiName = req.originalUrl.replace(/^\//, '');
-            let schema = schemaHelper.resolveSchema(apiName);
-            req.api = {
-                name: apiName,
-                schema: schema,
-                payload: {
-                    state: stateHelper.extract(req),
-                    constant: schema.constant,
-                    request: req.body.request
+            try{
+                let apiName = req.originalUrl.replace(/^\//, '');
+                let schema = schemaHelper.resolveSchema(apiName);
+                req.api = {
+                    name: apiName,
+                    schema: schema,
+                    payload: {
+                        state: stateHelper.extract(req),
+                        constant: schema.constant,
+                        request: req.body.request
+                    }
                 }
+                next();
             }
-            next();
+            catch(err) {
+                logger.error(err.stack);
+                res.sendStatus(500);
+            }
         });
 
         // 中间件
