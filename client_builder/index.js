@@ -48,8 +48,8 @@ class Builder {
     static _initTargetFolder(targetFolder) {
 		let errDealer = err => err ? exitWithError(err) : null;
 		this._deleteFolderRecursive(targetFolder);
-		fs.ensureDirSync(targetFolder, errDealer);
-		fs.ensureDirSync(`${targetFolder}/${pureSchemaFolderName}`, errDealer);
+		fsx.ensureDirSync(targetFolder, errDealer);
+		fsx.ensureDirSync(`${targetFolder}/${pureSchemaFolderName}`, errDealer);
         ncp(`${__dirname}/source/lib`, targetFolder + '/lib', errDealer);
 		fsx.copy(`${__dirname}/source/example.js`, targetFolder + '/example.js', errDealer);
     }
