@@ -12,8 +12,8 @@ module.exports = class {
     constructor() {
         this._host = '0.0.0.0';
         this._port = 3000;
-        this._handler = `${__dirname}/app/handler`;
-        this._log = `${__dirname}/log/`;
+        this._handler = `${__dirname}/app/handler/`;
+        this._log = `${__dirname}/app/log/`;
         this._middlewareList = [];
     }
 
