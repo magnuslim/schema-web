@@ -3,12 +3,12 @@ const ajv = new Ajv();
 
 module.exports = class {
 
-	constructor(handlerDir) {
-		this._handlerDir = handlerDir;
+	constructor(schemaDir) {
+		this._schemaDir = schemaDir;
 	}
 
 	resolveSchema(api) {
-		let schemaFile = `${this._handlerDir}/${api}/schema.js`;
+		let schemaFile = `${this._schemaDir}/${api}`;
 		let schema = null;
 		try {
 			schema = require(schemaFile);
@@ -18,9 +18,8 @@ module.exports = class {
 		}
 		if ((typeof schema.request !== 'object') 
 			|| (typeof schema.response !== 'object') 
-			|| (typeof schema.info !== 'object')
-			|| (typeof schema.info.auth !== 'boolean')) {
-			throw new Error(`bad format of schemaFile(${schemaFile}), expecting request / response to be an object, and auth to be an boolean.`);
+			|| (typeof schema.info !== 'object')) {
+			throw new Error(`bad format of schemaFile(${schemaFile}), expecting request/response/info to be objects.`);
 		}
 		return schema;
 	}

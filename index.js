@@ -13,6 +13,7 @@ module.exports = class {
         this._host = '0.0.0.0';
         this._port = 3000;
         this._handler = `${__dirname}/app/handler/`;
+        this._schema = `${__dirname}/app/schema/`;
         this._log = `${__dirname}/app/log/`;
         this._middlewareList = [];
     }
@@ -25,10 +26,11 @@ module.exports = class {
         
     }) {
         let zeus = new this();
-        if(opts.host)          zeus._host       = opts.host;
-        if(opts.port)          zeus._port       = opts.port;
-        if(opts.handlerDir)    zeus._handler    = opts.handlerDir;
-        if(opts.logDir)        zeus._log        = opts.logDir;
+        if(opts.host)       zeus._host    = opts.host;
+        if(opts.port)       zeus._port    = opts.port;
+        if(opts.handlerDir) zeus._handler = opts.handlerDir;
+        if(opts.schemaDir)  zeus._schema  = opts.schemaDir;
+        if(opts.logDir)     zeus._log     = opts.logDir;
         return zeus;
     }
 
@@ -42,7 +44,7 @@ module.exports = class {
             level: Logger.LEVEL_ERROR,
             path: this._log
         });
-        const schemaHelper = new SchemaHelper(this._handler);
+        const schemaHelper = new SchemaHelper(this._schema);
         const app = Express();
         app.use(cors());
         app.use((req, res, next) => {
