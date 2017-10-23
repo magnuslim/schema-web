@@ -15,7 +15,7 @@ module.exports = class {
         this._handler = `${__dirname}/app/handler/`;
         this._schema = `${__dirname}/app/schema/`;
         this._log = `${__dirname}/app/log/`;
-        this._middlewareList = [];
+        this.app = Express();
     }
 
     static create(opts = {
@@ -31,23 +31,18 @@ module.exports = class {
         if(opts.handlerDir) zeus._handler = opts.handlerDir;
         if(opts.schemaDir)  zeus._schema  = opts.schemaDir;
         if(opts.logDir)     zeus._log     = opts.logDir;
+        zeus._init();
         return zeus;
     }
 
-    installMiddleware(middleware) {
-        this._middlewareList.push(middleware);
-        return this;
-    }
-
-    raise() {
+    _init() {
         const logger = new Logger({
             level: Logger.LEVEL_ERROR,
             path: this._log
         });
         const schemaHelper = new SchemaHelper(this._schema);
-        const app = Express();
-        app.use(cors());
-        app.use((req, res, next) => {
+        this.app.use(cors());
+        this.app.use((req, res, next) => {
             let chunks = [];
             req.on('data', (chunk) => { 
                 chunks.push(chunk);
@@ -68,7 +63,7 @@ module.exports = class {
         });
 
         // 参数预处理
-        app.post('/*', (req, res, next) => {
+        this.app.post('/*', (req, res, next) => {
             try{
                 let apiName = req.originalUrl.replace(/^\//, '');
                 let schema = schemaHelper.resolveSchema(apiName);
@@ -89,19 +84,8 @@ module.exports = class {
             }
         });
 
-        // 中间件
-        for(let idx in this._middlewareList) {
-            app.post(this._middlewareList[idx].pattern, (req, res, next) => {
-                this._middlewareList[idx].handle(req, res, next)
-                .catch((err) => {
-                    logger.error(`[middleware.${idx}] ${err.stack}`);
-                    res.sendStatus(500);
-                });
-            });
-        }
-
         // 接口派发
-        app.post('/*', async (req, res) => {
+        this.app.post('/*', async (req, res) => {
             try {
                 schemaHelper.validateSchema('request', req.api.payload.request, req.api.schema);
                 let response = await require(`${this._handler}/${req.api.name}`)(req.api.payload);
@@ -113,8 +97,21 @@ module.exports = class {
                 res.sendStatus(500);
             }
         });
+    }
 
-        app.listen(this._port, this._host);
+    installMiddleware(middleware) {
+        this.app.post(middleware.pattern, (req, res, next) => {
+            middleware.handle(req, res, next)
+            .catch((err) => {
+                logger.error(`[middleware.${idx}] ${err.stack}`);
+                res.sendStatus(500);
+            });
+        });
+        return this;
+    }
+
+    raise() {
+        this.app.listen(this._port, this._host);
     }
 
 }
