@@ -24,18 +24,18 @@ module.exports = class {
         handlerDir: undefined,
         logDir: undefined,
         
-    }) {
+    }, middlewares = []) {
         let zeus = new this();
         if(opts.host)       zeus._host    = opts.host;
         if(opts.port)       zeus._port    = opts.port;
         if(opts.handlerDir) zeus._handler = opts.handlerDir;
         if(opts.schemaDir)  zeus._schema  = opts.schemaDir;
         if(opts.logDir)     zeus._log     = opts.logDir;
-        zeus._init();
+        zeus._init(middlewares);
         return zeus;
     }
 
-    _init() {
+    _init(middlewares = []) {
         const logger = new Logger({
             level: Logger.LEVEL_ERROR,
             path: this._log
@@ -84,6 +84,16 @@ module.exports = class {
             }
         });
 
+        middlewares.map((middleware, idx) => {
+            this.app.post(middleware.pattern, (req, res, next) => {
+                middleware.handle(req, res, next)
+                .catch((err) => {
+                    logger.error(`[middleware.${idx}] ${err.stack}`);
+                    res.sendStatus(500);
+                });
+            });
+        });
+
         // 接口派发
         this.app.post('/*', async (req, res) => {
             try {
@@ -97,17 +107,6 @@ module.exports = class {
                 res.sendStatus(500);
             }
         });
-    }
-
-    installMiddleware(middleware) {
-        this.app.post(middleware.pattern, (req, res, next) => {
-            middleware.handle(req, res, next)
-            .catch((err) => {
-                logger.error(`[middleware.${idx}] ${err.stack}`);
-                res.sendStatus(500);
-            });
-        });
-        return this;
     }
 
     raise() {
