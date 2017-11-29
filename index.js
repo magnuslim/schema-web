@@ -110,7 +110,7 @@ module.exports = class {
     }
 
     raise() {
-        this.app.listen(this._port, this._host);
+        return this.app.listen(this._port, this._host);
     }
 
 }
