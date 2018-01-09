@@ -99,6 +99,7 @@ module.exports = class {
             try {
                 schemaHelper.validateSchema('request', req.api.payload.request, req.api.schema);
                 let response = await require(`${this._handler}/${req.api.name}`)(req.api.payload);
+                if(response === undefined) response = null;
                 schemaHelper.validateSchema('response', response, req.api.schema);
                 res.json({response});
             }
