@@ -51,7 +51,7 @@
 
 Create a entry file `index.js` for the server:
 ```js
-const Server = require('schema-web');
+const Server = require('schema-web').Server;
 
 let server = new Server({
     host: "127.0.0.1",
