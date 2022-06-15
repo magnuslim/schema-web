@@ -4,8 +4,7 @@
     "color": "EEEEEE"
   },
   "CHECKS": {
-    // "prefixes": ["fix: ", "feat: "],
-    "regexp": "\[[A-Z]{3,5}-[0-9]{1,6}\]",
+    "regexp": "\\[[A-Z]{3,5}-[0-9]{1,6}\\]",
     "regexpFlags": "i",
     "ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
   },
